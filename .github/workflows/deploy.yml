@@ -11,12 +11,15 @@ jobs:
 
     steps:
       - name: Execute remote SSH commands using SSH key
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          port: 22
+          timeout: 60s
+          command_timeout: 30s
+          debug: true
           script: whoami
       
       - name: Checkout code
