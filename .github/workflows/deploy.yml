@@ -21,11 +21,11 @@ jobs:
           password: ${{ secrets.CR_PAT }}
       
       - name: Copy docker-compose.yml
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.SSH_KEY }}
           source: "docker-compose.yml"
           target: "/apps/sample-app/"
 
