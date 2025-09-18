@@ -19,15 +19,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}/nestjs-app:latest
-
-      # 📂 Copiar docker-compose.yml para o servidor
+      
       - name: Copy docker-compose.yml
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -37,7 +29,13 @@ jobs:
           source: "docker-compose.yml"
           target: "/apps/sample-app/"
 
-      # 🚀 Deploy (pull + restart containers)
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}/nestjs-app:latest
+
       - name: Deploy on Hetzner
         uses: appleboy/ssh-action@v1.0.0
         with:
