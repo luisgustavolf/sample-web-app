@@ -10,18 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Execute remote SSH commands using SSH key
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          timeout: 60s
-          command_timeout: 30s
-          debug: true
-          script: whoami
-      
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -32,6 +20,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
       
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}/nestjs-app:latest
+
       - name: Copy docker-compose.yml
         uses: appleboy/scp-action@v1
         with:
@@ -42,13 +37,6 @@ jobs:
           source: "docker-compose.yml"
           target: "/apps/sample-app/"
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}/nestjs-app:latest
-
       - name: Deploy on Hetzner
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -57,5 +45,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /apps/sample-app
+            echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose pull
             docker compose up -d
