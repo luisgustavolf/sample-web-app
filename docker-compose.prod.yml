@@ -1,0 +1,15 @@
+# This file must be updated directly on the server
+services:
+  nestjs-app:
+    image: ghcr.io/luisgustavolf/sample-web-app/nestjs-app:latest
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - nginx-proxy-manager-network
+
+networks:
+  nginx-proxy-manager-network:
+    external: true

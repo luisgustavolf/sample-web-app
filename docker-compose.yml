@@ -1,9 +1,0 @@
-services:
-  nestjs-app:
-    image: ghcr.io/luisgustavolf/sample-web-app/nestjs-app:latest
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-    restart: unless-stopped

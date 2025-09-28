@@ -31,24 +31,14 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}/nestjs-app:latest
 
-      - name: Copy docker-compose.yml
-        uses: appleboy/scp-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          source: "docker-compose.yml"
-          target: "/apps/sample-app/"
-
-      - name: Deploy on Hetzner
+      - name: Update Image and Reset Server
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /apps/sample-app
+            cd /apps/nestjs-app
             echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose pull
             docker compose up -d
